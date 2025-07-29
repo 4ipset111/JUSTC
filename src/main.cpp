@@ -5,11 +5,14 @@
 int main()
 {
     std::string script = R"(
-        -- This is a comment
+        testnumber is 1,
         roblox is "rbx",
+        ECHO VALUE(testnumber),
+        ECHO testnumber,
         ECHO VALUE(roblox),
         ECHO roblox,
-        ECHO "Hey".
+        ECHO 42,
+        ECHO "test".
     )";
 
     Lexer lexer(script);
@@ -17,10 +20,10 @@ int main()
 
     Parser parser(tokens);
 
-    for (const auto& token : tokens)
+    /*for (const auto& token : tokens)
     {
         std::cout << "[" << token.line << "] " << (int)token.type << ": " << token.value << "\n";
-    }
+    }*/
 
     parser.execute();
 

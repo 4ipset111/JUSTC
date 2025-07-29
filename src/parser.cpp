@@ -1,4 +1,5 @@
 ﻿#include "parser.h"
+#include <algorithm>
 
 Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens), pos(0) {}
 
@@ -49,20 +50,19 @@ void Parser::parseAssignment()
 {
     std::string name = advance().value;
     advance(); // skip 'is'
-    if (!match(TokenType::StringLiteral))
+
+    if (match(TokenType::StringLiteral))
     {
-        error("Expected string after 'is'");
-        return;
+        variables[name] = previous().value;
     }
-    std::string value = previous().value;
-
-    /*if (!match(TokenType::Comma))
+    else if (match(TokenType::IntLiteral))
     {
-        error("Expected ',' after string value");
-        return;
-    }*/
-
-    variables[name] = value;
+        variables[name] = previous().value;
+    }
+    else
+    {
+        error("Expected string or number after 'is'");
+    }
 }
 
 void Parser::parseEcho()
@@ -96,20 +96,34 @@ void Parser::parseEcho()
 
         if (variables.count(name))
         {
-            std::cout << variables[name] << std::endl; // raw value
+            // Raw value output
+            std::cout << variables[name] << std::endl;
         }
         else
         {
             error("Undefined variable: " + name);
         }
     }
-    // Case 2: ECHO variable (quoted output)
+    // Case 2: ECHO variable (formatted output)
     else if (match(TokenType::Identifier))
     {
         std::string name = previous().value;
         if (variables.count(name))
         {
-            std::cout << "\"" << variables[name] << "\"" << std::endl; // quoted value
+            const std::string& value = variables[name];
+            // Check if value is numeric (all digits)
+            bool isNumeric = !value.empty() &&
+                std::all_of(value.begin(), value.end(),
+                    [](char c) { return std::isdigit(c); });
+
+            if (isNumeric)
+            {
+                std::cout << value << std::endl;
+            }
+            else
+            {
+                std::cout << "\"" << value << "\"" << std::endl;
+            }
         }
         else
         {
@@ -121,8 +135,13 @@ void Parser::parseEcho()
     {
         std::cout << previous().value << std::endl;
     }
+    // Case 4: ECHO integer literal
+    else if (match(TokenType::IntLiteral))
+    {
+        std::cout << previous().value << std::endl;
+    }
     else
     {
-        error("Expected VALUE(variable), variable name, or string literal after ECHO");
+        error("Expected VALUE(variable), variable name, string or number after ECHO");
     }
 }

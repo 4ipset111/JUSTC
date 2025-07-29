@@ -3,12 +3,14 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 enum class TokenType
 {
     Identifier,
     Keyword,
     StringLiteral,
+    IntLiteral,
     Comma,
     LParen,
     RParen,
@@ -41,8 +43,9 @@ private:
     void skipWhitespaceAndComments();
 
     static bool isAlphaNumericOrUnderscore(char c) { return isalnum(c) || c == '_'; }
+    static bool isDigit(char c) { return isdigit(c); }
 
-    std::string readWhile(bool (*predicate)(char));
+    std::string readWhile(std::function<bool(char)> predicate);
 
     std::string readString();
 

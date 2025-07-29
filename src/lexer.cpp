@@ -18,7 +18,12 @@ std::vector<Token> Lexer::tokenize()
 
         char ch = peek();
 
-        if (isalpha(ch))
+        if (isdigit(ch))
+        {
+            std::string num = readWhile([](char c) { return isdigit(c); });
+            tokens.push_back({ TokenType::IntLiteral, num, line });
+        }
+        else if (isalpha(ch))
         {
             std::string word = readWhile(isAlphaNumericOrUnderscore);
             if (isKeyword(word))
@@ -78,7 +83,7 @@ void Lexer::skipWhitespaceAndComments()
     }
 }
 
-std::string Lexer::readWhile(bool (*predicate)(char))
+std::string Lexer::readWhile(std::function<bool(char)> predicate)
 {
     std::string result;
     while (pos < input.size() && predicate(peek())) result += advance();
