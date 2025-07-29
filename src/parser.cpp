@@ -14,14 +14,16 @@ void Parser::execute()
         {
             parseEcho();
         }
-        else
+        else if (!isAtEnd())
         {
-            error("Unexpected token: " + peek().value + " (expected assignment or ECHO)");
+            error("Unexpected token: " + peek().value);
             advance();
             continue;
         }
 
-        // check . or ,
+        // Handle statement terminators
+        if (isAtEnd()) break;
+
         if (check(TokenType::Comma))
         {
             advance();
@@ -35,7 +37,7 @@ void Parser::execute()
             }
             break;
         }
-        else
+        else if (!isAtEnd())
         {
             error("Expected ',' or '.' after statement");
             break;
@@ -67,38 +69,60 @@ void Parser::parseEcho()
 {
     advance(); // skip 'ECHO'
 
-    if (!match(TokenType::Keyword) || previous().value != "VALUE")
+    // Case 1: ECHO VALUE(variable)
+    if (check(TokenType::Keyword, "VALUE"))
     {
-        error("Expected VALUE after ECHO");
-        return;
+        advance(); // skip 'VALUE'
+
+        if (!match(TokenType::LParen))
+        {
+            error("Expected '(' after VALUE");
+            return;
+        }
+
+        if (!match(TokenType::Identifier))
+        {
+            error("Expected identifier in VALUE()");
+            return;
+        }
+
+        std::string name = previous().value;
+
+        if (!match(TokenType::RParen))
+        {
+            error("Expected ')' after identifier");
+            return;
+        }
+
+        if (variables.count(name))
+        {
+            std::cout << variables[name] << std::endl; // raw value
+        }
+        else
+        {
+            error("Undefined variable: " + name);
+        }
     }
-
-    if (!match(TokenType::LParen))
+    // Case 2: ECHO variable (quoted output)
+    else if (match(TokenType::Identifier))
     {
-        error("Expected '(' after VALUE");
-        return;
+        std::string name = previous().value;
+        if (variables.count(name))
+        {
+            std::cout << "\"" << variables[name] << "\"" << std::endl; // quoted value
+        }
+        else
+        {
+            error("Undefined variable: " + name);
+        }
     }
-
-    if (!match(TokenType::Identifier))
+    // Case 3: ECHO "string literal"
+    else if (match(TokenType::StringLiteral))
     {
-        error("Expected identifier in VALUE()");
-        return;
-    }
-
-    std::string name = previous().value;
-
-    if (!match(TokenType::RParen))
-    {
-        error("Expected ')' after identifier");
-        return;
-    }
-
-    if (variables.count(name))
-    {
-        std::cout << variables[name] << std::endl;
+        std::cout << previous().value << std::endl;
     }
     else
     {
-        error("Undefined variable: " + name);
+        error("Expected VALUE(variable), variable name, or string literal after ECHO");
     }
 }

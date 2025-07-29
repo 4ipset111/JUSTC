@@ -6,8 +6,10 @@ int main()
 {
     std::string script = R"(
         -- This is a comment
-        roblox is "rbx,
-        ECHO VALUE(roblox).
+        roblox is "rbx",
+        ECHO VALUE(roblox),
+        ECHO roblox,
+        ECHO "Hey".
     )";
 
     Lexer lexer(script);
