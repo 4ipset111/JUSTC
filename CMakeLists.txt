@@ -8,7 +8,11 @@ endif()
 project ("JustC")
 
 set(SOURCE_FILES
+	src/lexer.cpp
+	src/lexer.h
 	src/main.cpp
+	src/parser.cpp
+	src/parser.h
 )
 
 include_directories(src)
