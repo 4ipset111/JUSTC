@@ -7,12 +7,15 @@ int main()
     std::string script = R"(
         testnumber is 1,
         roblox is "rbx",
-        ECHO VALUE(testnumber),
-        ECHO testnumber,
-        ECHO VALUE(roblox),
-        ECHO roblox,
-        ECHO 42,
-        ECHO "test".
+        --ECHO VALUE(testnumber),
+        --ECHO testnumber,
+        --ECHO VALUE(roblox),
+        --ECHO roblox,
+        --ECHO 42,
+        a is .2,
+        b is -.2,
+        ECHO VALUE(a),
+        ECHO VALUE(b).
     )";
 
     Lexer lexer(script);
@@ -20,10 +23,10 @@ int main()
 
     Parser parser(tokens);
 
-    /*for (const auto& token : tokens)
+    for (const auto& token : tokens)
     {
         std::cout << "[" << token.line << "] " << (int)token.type << ": " << token.value << "\n";
-    }*/
+    }
 
     parser.execute();
 

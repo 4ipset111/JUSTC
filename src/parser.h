@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <cctype>
 #include <sstream>
 #include "lexer.h"
@@ -54,10 +55,25 @@ private:
         std::cerr << "[Line " << peek().line << "] Error: " << message << std::endl;
     }
 
+    static std::string normalizeFloat(const std::string& value)
+    {
+        if (value.size() >= 2 && value[0] == '-' && value[1] == '.')
+        {
+            return "-0" + value.substr(1);
+        }
+        if (!value.empty() && value[0] == '.')
+        {
+            return "0" + value;
+        }
+        return value;
+    }
+
     // === Statements ===
     void parseAssignment();
-
     void parseEcho();
+
+    std::string resolveValue(const std::string& name, std::unordered_set<std::string>& visited);
+    std::string resolveValue(const std::string& name);
 };
 
 #endif // __PARSER_H__

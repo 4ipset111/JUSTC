@@ -11,6 +11,7 @@ enum class TokenType
     Keyword,
     StringLiteral,
     IntLiteral,
+    FloatLiteral,
     Comma,
     LParen,
     RParen,
@@ -46,8 +47,8 @@ private:
     static bool isDigit(char c) { return isdigit(c); }
 
     std::string readWhile(std::function<bool(char)> predicate);
-
     std::string readString();
+    std::string readNumber();
 
     bool isKeyword(const std::string& word) const { return word == "is" || word == "ECHO" || word == "VALUE"; }
 };

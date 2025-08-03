@@ -5,8 +5,11 @@ bool is true,                                                   -- boolean (true
 null is null,                                                   -- null
 number is 123,                                                  -- number
 hexdecnum is #FF,                                               -- hecadecimal number
+hexdecnum2 is xFF,                                              -- hecadecimal number
 base64num is &FF,                                               -- BASE 64 number
+base32num is @FF,                                               -- BASE 32 number
 binarynum is b0100,                                             -- binary (BASE 2) number
+octalnum is o100,                                               -- octal number
 undef is undefined,                                             -- undefined
 json is JSON{"a": "b"},                                         -- json
 JUSTC(path/to/file.justc) copy[var1, var2],                     -- import some variables from another justc file
@@ -32,8 +35,18 @@ strinng is STRING(VALUE(base64num)),                            -- returns "&FF"
 strnggg is STRING(VALUE(binarynum)),                            -- returns "b0100"
 strnggd is STRING(VALUE(hexdecnum)),                            -- returns "#FF"
 strinnngg is STRINGB64(VALUE(base64num)),                       -- returns "FF"
+strngg3 is STRING(VALUE(base32num)),                            -- returns "@FF"
+strngb32 is STRINGB32(VALUE(base32num)),                        -- returns "FF"
 strngg is STRINGBIN(VALUE(binarynum)),                          -- returns "0100"
 strnghex is STRINGHEX(VALUE(hexdecnum)),                        -- returns "FF"
+strnggo is STRING(VALUE(octalnum)),                             -- returns "o100"
+strngoct is STRINGOCT(VALUE(octalnum)),                         -- returns "100"
+numberr is NUMBER(octalnum),                                    -- convert hex num or base 64 num or base 2 num or octal num or base 32 num to number.
+tobin is BINARY(123),                                           -- convert number or hex num or base 64 num or octal num or base 32 num to binary (base 2) number.
+tooct is OCTAL(123),                                            -- convert number or hex num or base 64 num or base2 num or base 32 num to octal number.
+tohex is HEXADECIMAL(123),                                      -- convert number or base 64 num or base 2 num or octal num or base 32 num to hexadecimal number.
+tob64 is BASE64(123),                                           -- convert number or hex num or base 2 num or octal num or base 32 num to base 64 number.
+tob64 is BASE32(123),                                           -- convert number or hex num or base 2 num or octal num or base 64 num to base 32 number.
 typeof is TYPEID(VALUE(str)),                                   -- returns type id (0 - F) (hecadecimal number) of argument 0
 typestr is TYPEOF(VALUE(str)),                                  -- returns type name (string) of argument 0
 joinstrings is "str1".."str2",                                  -- in js it will be "str1"+"str2"
@@ -65,5 +78,7 @@ somethingidk is another_justc_object.something,                 -- access variab
 justc_obj is PARSEJUSTC("something is true."),                  -- similar to nested JUSTC object. Argument 0 should be a string, otherwise throws an error. Parse error = Throws an error
 json_obj is PARSEJSON(HTTPTEXT(VALUE(stringtolink))),           -- parse JSON string. Argument 0 should be a string, otherwise throws an error. Parse error = Throws an error
 OUTPUT SPECIFIED,                                               -- SPECIFIED (default) = output only specified variables using RETURN command (Throws an error if there is no RETURN command), EVERYTHING = output every variable (Throws an error if there is RETURN command), DISABLED = outputs undefined.
+hocon_obj is PARSEHOCON("a = b"),                               -- parse HOCON string. Argument 0 should be a string, otherwise throws an error. Parse error = Throws an error
+hoconfromserver is HTTPHOCON(<http://example.com/hocon>),       -- HTTP GET request, returns HOCON if success and code 200, otherwise throws an error. HTTPHOCON argument 0 should be a link, string will throw an error. HOCON parse error = throws an error.
 RETURN [filesize, commitsha] AS [var5, var6].                   -- return configuration variables (output). this command should be the last command. RETURN [ variables ] AS [ specified_variable_names ]
 -- types (name (id)) : link (3), string (2), boolean (4), null (7), undefined (8), number (1), hecadecimal number (9), base 64 number (A), binary number (B), json object (5), json array (6), justc object (0), path (C), error (D), variable (E), function (F), unknown (-1).

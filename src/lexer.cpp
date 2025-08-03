@@ -18,10 +18,14 @@ std::vector<Token> Lexer::tokenize()
 
         char ch = peek();
 
-        if (isdigit(ch))
+        if (isdigit(ch) || (ch == '.' && pos + 1 < input.size() && isdigit(input[pos + 1])) ||
+            (ch == '-' && pos + 1 < input.size() && (isdigit(input[pos + 1]) || input[pos + 1] == '.')))
         {
-            std::string num = readWhile([](char c) { return isdigit(c); });
-            tokens.push_back({ TokenType::IntLiteral, num, line });
+            std::string num = readNumber();
+            if (num.find('.') != std::string::npos)
+                tokens.push_back({ TokenType::FloatLiteral, num, line });
+            else
+                tokens.push_back({ TokenType::IntLiteral, num, line });
         }
         else if (isalpha(ch))
         {
@@ -96,5 +100,35 @@ std::string Lexer::readString()
     advance(); // skip "
     while (pos < input.size() && peek() != '"') result += advance();
     if (peek() == '"') advance(); else std::cerr << "Unterminated string\n";
+    return result;
+}
+
+std::string Lexer::readNumber()
+{
+    std::string result;
+
+    if (peek() == '-') result += advance(); // handle leading minus
+
+    bool hasDot = false;
+
+    while (pos < input.size())
+    {
+        char ch = peek();
+
+        if (isdigit(ch))
+        {
+            result += advance();
+        }
+        else if (ch == '.' && !hasDot)
+        {
+            hasDot = true;
+            result += advance();
+        }
+        else
+        {
+            break;
+        }
+    }
+
     return result;
 }
