@@ -5,7 +5,7 @@ if (POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project ("JustC")
+project (JUSTC)
 
 set(SOURCE_FILES
 	src/lexer.cpp
@@ -17,8 +17,8 @@ set(SOURCE_FILES
 
 include_directories(src)
 
-add_executable(JustC ${SOURCE_FILES})
+add_executable(JUSTC ${SOURCE_FILES})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET JustC PROPERTY CXX_STANDARD 20)
+  set_property(TARGET JUSTC PROPERTY CXX_STANDARD 20)
 endif()
