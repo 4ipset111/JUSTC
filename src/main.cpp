@@ -24,9 +24,7 @@ int main()
     Parser parser(tokens);
 
     for (const auto& token : tokens)
-    {
         std::cout << "[" << token.line << "] " << (int)token.type << ": " << token.value << "\n";
-    }
 
     parser.execute();
 
